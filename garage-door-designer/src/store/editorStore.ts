@@ -12,6 +12,8 @@ type EditorStore = {
 
   isSelectingGarage: boolean
 
+  selectedGarageDoor: string | null
+
   setHouseImage: (
     image: string | null
   ) => void
@@ -29,6 +31,10 @@ type EditorStore = {
   ) => void
 
   resetSelection: () => void
+
+  setSelectedGarageDoor: (
+    door: string | null
+  ) => void
 }
 
 export const useEditorStore =
@@ -40,6 +46,7 @@ export const useEditorStore =
     imageBounds: null,
 
     isSelectingGarage: false,
+    selectedGarageDoor: null,
 
     setHouseImage: (image) =>
       set({
@@ -65,5 +72,10 @@ export const useEditorStore =
     setImageBounds: (bounds) =>
       set({
         imageBounds: bounds,
+      }),
+
+    setSelectedGarageDoor: (door) =>
+      set({
+        selectedGarageDoor: door,
       }),
   }))

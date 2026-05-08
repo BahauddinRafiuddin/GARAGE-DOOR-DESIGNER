@@ -18,10 +18,10 @@ const SelectionPoint = ({
     <Circle
       x={x}
       y={y}
-      radius={14}
+      radius={9}
       fill="#3b82f6"
       stroke="white"
-      strokeWidth={2}
+      strokeWidth={1}
       draggable
       shadowColor="#3b82f6"
       dragBoundFunc={(pos) => pos}

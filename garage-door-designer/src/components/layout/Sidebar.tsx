@@ -1,6 +1,7 @@
 import ImageUploader from '../../features/image-upload/components/ImageUploader'
 
 import GarageSelectionPanel from '../../features/garage-selection/components/GarageSelectionPanel'
+import GarageDoorPanel from '../../features/garage-overlay/components/GarageDoorPanel'
 
 type SidebarProps = {
   isOpen: boolean
@@ -46,6 +47,8 @@ const Sidebar = ({
         <ImageUploader />
 
         <GarageSelectionPanel />
+
+        <GarageDoorPanel/>
       </aside>
     </>
   )
