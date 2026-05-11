@@ -1,4 +1,8 @@
-import { Rect } from 'react-konva'
+import { Image as KonvaImage } from 'react-konva'
+
+import useImage from 'use-image'
+
+import { useEditorStore } from '../../store/editorStore'
 
 type GarageWindowOverlayProps = {
   x: number
@@ -13,40 +17,96 @@ const GarageWindowOverlay = ({
   width,
   height,
 }: GarageWindowOverlayProps) => {
-  const windowWidth = width * 0.18
+  const selectedWindow =
+    useEditorStore(
+      (state) =>
+        state.selectedWindow
+    )
 
-  const windowHeight = height * 0.12
+  const windowPosition =
+    useEditorStore(
+      (state) =>
+        state.windowPosition
+    )
 
-  const gap = width * 0.04
+  const setWindowPosition =
+    useEditorStore(
+      (state) =>
+        state.setWindowPosition
+    )
 
-  const startX =
-    x +
-    width / 2 -
-    ((windowWidth * 4 + gap * 3) / 2)
+  const [windowImage] = useImage(
+    selectedWindow || ''
+  )
 
-  const topY = y + height * 0.12
+  if (!selectedWindow || !windowImage) {
+    return null
+  }
+
+  const overlayWidth =
+    width * 0.7
+
+  const overlayHeight =
+    height * 0.18
 
   return (
-    <>
-      {[0, 1, 2, 3].map((index) => (
-        <Rect
-          key={index}
-          x={
-            startX +
-            index *
-              (windowWidth + gap)
-          }
-          y={topY}
-          width={windowWidth}
-          height={windowHeight}
-          fill="#dbeafe"
-          stroke="#1e293b"
-          strokeWidth={2}
-          cornerRadius={4}
-          opacity={0.8}
-        />
-      ))}
-    </>
+    <KonvaImage
+      image={windowImage}
+      x={
+        x +
+        width *
+          windowPosition.x
+      }
+      y={
+        y +
+        height *
+          windowPosition.y
+      }
+      width={overlayWidth}
+      height={overlayHeight}
+      draggable
+
+      onDragEnd={(event) => {
+        const localX =
+          (event.target.x() -
+            x) /
+          width
+
+        const localY =
+          (event.target.y() -
+            y) /
+          height
+
+        // Keep window inside garage
+
+        const clampedX =
+          Math.max(
+            0,
+            Math.min(
+              localX,
+              1 -
+                overlayWidth /
+                  width
+            )
+          )
+
+        const clampedY =
+          Math.max(
+            0,
+            Math.min(
+              localY,
+              1 -
+                overlayHeight /
+                  height
+            )
+          )
+
+        setWindowPosition({
+          x: clampedX,
+          y: clampedY,
+        })
+      }}
+    />
   )
 }
 

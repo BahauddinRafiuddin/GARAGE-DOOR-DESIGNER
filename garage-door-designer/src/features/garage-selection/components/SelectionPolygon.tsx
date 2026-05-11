@@ -23,6 +23,7 @@ const SelectionPolygon = ({
       strokeWidth={3}
       closed={points.length === 4}
       fill="rgba(59,130,246,0.2)"
+      listening={false}
     />
   )
 }

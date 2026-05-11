@@ -35,6 +35,27 @@ type EditorStore = {
 
   stageRef: any
 
+  selectedWindow: string | null
+
+  selectedHandle: string | null
+
+  selectedHinge: string | null
+
+  windowPosition: {
+    x: number
+    y: number
+  }
+
+  handlePosition: {
+    x: number
+    y: number
+  }
+
+  hingePosition: {
+    x: number
+    y: number
+  }
+
   setHouseImage: (
     image: string | null
   ) => void
@@ -95,6 +116,39 @@ type EditorStore = {
     ref: any
   ) => void
 
+  setSelectedWindow: (
+    image: string | null
+  ) => void
+
+  setSelectedHandle: (
+    image: string | null
+  ) => void
+
+  setSelectedHinge: (
+    image: string | null
+  ) => void
+
+  setWindowPosition: (
+    position: {
+      x: number
+      y: number
+    }
+  ) => void
+
+  setHandlePosition: (
+    position: {
+      x: number
+      y: number
+    }
+  ) => void
+
+  setHingePosition: (
+    position: {
+      x: number
+      y: number
+    }
+  ) => void
+
 }
 
 export const useEditorStore =
@@ -123,6 +177,26 @@ export const useEditorStore =
     isExporting: false,
 
     stageRef: null,
+    selectedWindow: null,
+
+    selectedHandle: null,
+
+    selectedHinge: null,
+
+    windowPosition: {
+      x: 0.15,
+      y: 0.08,
+    },
+
+    handlePosition: {
+      x: 0.42,
+      y: 0.55,
+    },
+
+    hingePosition: {
+      x: 0.03,
+      y: 0.2,
+    },
 
     setHouseImage: (image) =>
       set({
@@ -223,5 +297,50 @@ export const useEditorStore =
     ) =>
       set({
         stageRef: ref,
+      }),
+
+    setSelectedWindow: (
+      image
+    ) =>
+      set({
+        selectedWindow: image,
+      }),
+
+    setSelectedHandle: (
+      image
+    ) =>
+      set({
+        selectedHandle: image,
+      }),
+
+    setSelectedHinge: (
+      image
+    ) =>
+      set({
+        selectedHinge: image,
+      }),
+
+    setWindowPosition: (
+      position
+    ) =>
+      set({
+        windowPosition:
+          position,
+      }),
+
+    setHandlePosition: (
+      position
+    ) =>
+      set({
+        handlePosition:
+          position,
+      }),
+
+    setHingePosition: (
+      position
+    ) =>
+      set({
+        hingePosition:
+          position,
       }),
   }))

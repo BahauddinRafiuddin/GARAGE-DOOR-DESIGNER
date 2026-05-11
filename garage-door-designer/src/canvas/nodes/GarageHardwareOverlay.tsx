@@ -1,4 +1,8 @@
-import { Circle, Rect } from 'react-konva'
+import { Image as KonvaImage } from 'react-konva'
+
+import useImage from 'use-image'
+
+import { useEditorStore } from '../../store/editorStore'
 
 type GarageHardwareOverlayProps = {
   x: number
@@ -13,41 +17,139 @@ const GarageHardwareOverlay = ({
   width,
   height,
 }: GarageHardwareOverlayProps) => {
-  const handleWidth = width * 0.08
+  const handlePosition =
+    useEditorStore(
+      (state) =>
+        state.handlePosition
+    )
 
-  const handleHeight = height * 0.18
+  const setHandlePosition =
+    useEditorStore(
+      (state) =>
+        state.setHandlePosition
+    )
 
-  const handleX =
-    x + width / 2 - handleWidth / 2
+  const selectedHandle =
+    useEditorStore(
+      (state) =>
+        state.selectedHandle
+    )
 
-  const handleY =
-    y + height * 0.55
+  const selectedHinge =
+    useEditorStore(
+      (state) =>
+        state.selectedHinge
+    )
+
+  const [handleImage] = useImage(
+    selectedHandle || ''
+  )
+
+  const [hingeImage] = useImage(
+    selectedHinge || ''
+  )
+
+  const handleWidth =
+    width * 0.16
+
+  const handleHeight =
+    height * 0.16
 
   return (
     <>
       {/* Handle */}
-      <Rect
-        x={handleX}
-        y={handleY}
-        width={handleWidth}
-        height={handleHeight}
-        fill="#111827"
-        cornerRadius={8}
-      />
+      {selectedHandle &&
+        handleImage && (
+          <KonvaImage
+            image={handleImage}
+            x={
+              x +
+              width *
+                handlePosition.x
+            }
+            y={
+              y +
+              height *
+                handlePosition.y
+            }
+            width={handleWidth}
+            height={handleHeight}
+            draggable
+
+            onDragEnd={(event) => {
+              // Convert absolute canvas position
+              // into normalized garage-relative position
+
+              const localX =
+                (event.target.x() -
+                  x) /
+                width
+
+              const localY =
+                (event.target.y() -
+                  y) /
+                height
+
+              // Prevent dragging outside garage
+
+              const clampedX =
+                Math.max(
+                  0,
+                  Math.min(
+                    localX,
+                    1 -
+                      handleWidth /
+                        width
+                  )
+                )
+
+              const clampedY =
+                Math.max(
+                  0,
+                  Math.min(
+                    localY,
+                    1 -
+                      handleHeight /
+                        height
+                  )
+                )
+
+              setHandlePosition({
+                x: clampedX,
+                y: clampedY,
+              })
+            }}
+          />
+        )}
 
       {/* Hinges */}
-      {[0, 1, 2].map((index) => (
-        <Circle
-          key={index}
-          x={x + width * 0.08}
-          y={
-            y +
-            height * (0.25 + index * 0.25)
-          }
-          radius={8}
-          fill="#111827"
-        />
-      ))}
+      {selectedHinge &&
+        hingeImage &&
+        [0, 1, 2].map(
+          (index) => (
+            <KonvaImage
+              key={index}
+              image={hingeImage}
+              x={
+                x +
+                width * 0.03
+              }
+              y={
+                y +
+                height *
+                  (0.2 +
+                    index *
+                      0.25)
+              }
+              width={
+                width * 0.08
+              }
+              height={
+                height * 0.08
+              }
+            />
+          )
+        )}
     </>
   )
 }
