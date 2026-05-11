@@ -5,6 +5,7 @@ import GarageSelectionPanel from '../../features/garage-selection/components/Gar
 import GarageDoorPanel from '../../features/garage-overlay/components/GarageDoorPanel'
 import GarageCustomizationPanel from '../../features/garage-overlay/components/GarageCustomizationPanel'
 import ComparisonPanel from '../../features/comparison/components/ComparisonPanel'
+import ExportPanel from '../../features/export/components/ExportPanel'
 
 type SidebarProps = {
   isOpen: boolean
@@ -61,6 +62,8 @@ const Sidebar = ({
           <GarageCustomizationPanel/>
 
           <ComparisonPanel/>
+
+          <ExportPanel/>
         </div>
       </aside>
     </>

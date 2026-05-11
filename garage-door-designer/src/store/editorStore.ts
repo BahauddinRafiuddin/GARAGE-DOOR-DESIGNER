@@ -31,6 +31,10 @@ type EditorStore = {
 
   comparisonPosition: number
 
+  isExporting: boolean
+
+  stageRef: any
+
   setHouseImage: (
     image: string | null
   ) => void
@@ -83,6 +87,14 @@ type EditorStore = {
     position: number
   ) => void
 
+  setIsExporting: (
+    exporting: boolean
+  ) => void
+
+  setStageRef: (
+    ref: any
+  ) => void
+
 }
 
 export const useEditorStore =
@@ -107,6 +119,10 @@ export const useEditorStore =
     comparisonMode: false,
 
     comparisonPosition: 0.5,
+
+    isExporting: false,
+
+    stageRef: null,
 
     setHouseImage: (image) =>
       set({
@@ -192,5 +208,20 @@ export const useEditorStore =
       set({
         comparisonPosition:
           position,
+      }),
+
+    setIsExporting: (
+      exporting
+    ) =>
+      set({
+        isExporting:
+          exporting,
+      }),
+
+    setStageRef: (
+      ref
+    ) =>
+      set({
+        stageRef: ref,
       }),
   }))

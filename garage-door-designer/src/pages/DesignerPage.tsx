@@ -1,5 +1,4 @@
 import MainLayout from '../components/layout/MainLayout'
-
 import Sidebar from '../components/layout/Sidebar'
 import MobileHeader from '../components/layout/MobileHeader'
 

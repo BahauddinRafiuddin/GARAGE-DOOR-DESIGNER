@@ -1,6 +1,6 @@
 import { Stage } from 'react-konva'
 
-
+import { useEffect, useRef } from 'react'
 import BackgroundLayer from '../layers/BackgroundLayer'
 import DoorLayer from '../layers/DoorLayer'
 import WindowLayer from '../layers/WindowLayer'
@@ -21,6 +21,7 @@ const GarageDesignerStage = ({
   height,
 }: GarageDesignerStageProps) => {
 
+  const stageRef = useRef<any>(null)
   const polygonPoints = useEditorStore(
     (state) => state.polygonPoints
   )
@@ -28,6 +29,16 @@ const GarageDesignerStage = ({
   const setPolygonPoints = useEditorStore(
     (state) => state.setPolygonPoints
   )
+
+  const setStageRef =
+    useEditorStore(
+      (state) =>
+        state.setStageRef
+    )
+
+  useEffect(() => {
+    setStageRef(stageRef)
+  }, [setStageRef])
 
   const houseImage = useEditorStore(
     (state) => state.houseImage
@@ -79,6 +90,7 @@ const GarageDesignerStage = ({
 
   return (
     <Stage
+      ref={stageRef}
       width={width}
       height={height}
       onClick={handlePointerInteraction}

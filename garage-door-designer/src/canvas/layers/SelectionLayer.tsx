@@ -4,7 +4,9 @@ import { useEditorStore } from '../../store/editorStore'
 
 import SelectionPolygon from '../../features/garage-selection/components/SelectionPolygon'
 import SelectionPoint from '../../features/garage-selection/components/SelectionPoint'
+
 import { denormalizePoint } from '../../features/garage-selection/utils/denormalizePoint'
+
 import { normalizePoint } from '../../features/garage-selection/utils/normalizePoint'
 
 const SelectionLayer = () => {
@@ -19,25 +21,36 @@ const SelectionLayer = () => {
   const imageBounds = useEditorStore(
     (state) => state.imageBounds
   )
-  const handlePointDrag = (
-  index: number,
-  x: number,
-  y: number
-) => {
-  const updatedPoints = [
-    ...polygonPoints,
-  ]
 
-  updatedPoints[index] =
-    normalizePoint(
-      x,
-      y,
-      imageBounds!
-    )
+  const isExporting = useEditorStore(
+    (state) => state.isExporting
+  )
 
-  setPolygonPoints(updatedPoints)
-}
+  // Hide selection UI during export
+  if (isExporting) {
+    return <Layer />
+  }
+
   if (!imageBounds) return null
+
+  const handlePointDrag = (
+    index: number,
+    x: number,
+    y: number
+  ) => {
+    const updatedPoints = [
+      ...polygonPoints,
+    ]
+
+    updatedPoints[index] =
+      normalizePoint(
+        x,
+        y,
+        imageBounds
+      )
+
+    setPolygonPoints(updatedPoints)
+  }
 
   const screenPoints = polygonPoints.map(
     (point) =>
@@ -47,6 +60,7 @@ const SelectionLayer = () => {
         imageBounds
       )
   )
+
   return (
     <Layer>
       <SelectionPolygon
