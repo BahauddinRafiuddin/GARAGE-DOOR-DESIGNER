@@ -1,4 +1,4 @@
-import { Image } from 'react-konva'
+import { Image, Rect } from 'react-konva'
 
 import useImage from 'use-image'
 
@@ -8,6 +8,8 @@ type GarageDoorImageProps = {
   y: number
   width: number
   height: number
+  opacity: number
+  color: string
 }
 
 const GarageDoorImage = ({
@@ -16,20 +18,36 @@ const GarageDoorImage = ({
   y,
   width,
   height,
+  opacity,
+  color,
 }: GarageDoorImageProps) => {
   const [image] = useImage(imageUrl)
 
   if (!image) return null
 
   return (
-    <Image
-      image={image}
-      x={x}
-      y={y}
-      width={width}
-      height={height}
-      opacity={0.9}
-    />
+    <>
+      {/* Base Door */}
+      <Image
+        image={image}
+        x={x}
+        y={y}
+        width={width}
+        height={height}
+        opacity={opacity}
+      />
+
+      {/* Color Overlay */}
+      <Rect
+        x={x}
+        y={y}
+        width={width}
+        height={height}
+        fill={color}
+        opacity={0.15}
+        globalCompositeOperation="multiply"
+      />
+    </>
   )
 }
 

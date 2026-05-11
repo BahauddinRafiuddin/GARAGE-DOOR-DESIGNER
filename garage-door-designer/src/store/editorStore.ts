@@ -2,6 +2,7 @@ import { create } from 'zustand'
 
 import type { Point } from '../types/canvas.types'
 import type { ImageBounds } from '../types/image.types'
+import type { GarageDoorCategory } from '../features/garage-overlay/types/garageDoor.types'
 
 type EditorStore = {
   houseImage: string | null
@@ -13,6 +14,22 @@ type EditorStore = {
   isSelectingGarage: boolean
 
   selectedGarageDoor: string | null
+
+  activeGarageCategory:
+  | GarageDoorCategory
+  | 'all'
+
+  garageDoorColor: string
+
+  garageDoorOpacity: number
+
+  showGarageWindows: boolean
+
+  showGarageHardware: boolean
+
+  comparisonMode: boolean
+
+  comparisonPosition: number
 
   setHouseImage: (
     image: string | null
@@ -35,6 +52,37 @@ type EditorStore = {
   setSelectedGarageDoor: (
     door: string | null
   ) => void
+
+  setActiveGarageCategory: (
+    category:
+      | GarageDoorCategory
+      | 'all'
+  ) => void
+
+  setGarageDoorColor: (
+    color: string
+  ) => void
+
+  setGarageDoorOpacity: (
+    opacity: number
+  ) => void
+
+  setShowGarageWindows: (
+    value: boolean
+  ) => void
+
+  setShowGarageHardware: (
+    value: boolean
+  ) => void
+
+  setComparisonMode: (
+    enabled: boolean
+  ) => void
+
+  setComparisonPosition: (
+    position: number
+  ) => void
+
 }
 
 export const useEditorStore =
@@ -47,6 +95,18 @@ export const useEditorStore =
 
     isSelectingGarage: false,
     selectedGarageDoor: null,
+    activeGarageCategory: 'all',
+    garageDoorColor: '#ffffff',
+
+    garageDoorOpacity: 1,
+
+    showGarageWindows: true,
+
+    showGarageHardware: true,
+
+    comparisonMode: false,
+
+    comparisonPosition: 0.5,
 
     setHouseImage: (image) =>
       set({
@@ -77,5 +137,60 @@ export const useEditorStore =
     setSelectedGarageDoor: (door) =>
       set({
         selectedGarageDoor: door,
+      }),
+
+    setActiveGarageCategory: (
+      category
+    ) =>
+      set({
+        activeGarageCategory:
+          category,
+      }),
+
+    setGarageDoorColor: (
+      color
+    ) =>
+      set({
+        garageDoorColor: color,
+      }),
+
+    setGarageDoorOpacity: (
+      opacity
+    ) =>
+      set({
+        garageDoorOpacity:
+          opacity,
+      }),
+
+    setShowGarageWindows: (
+      value
+    ) =>
+      set({
+        showGarageWindows:
+          value,
+      }),
+
+    setShowGarageHardware: (
+      value
+    ) =>
+      set({
+        showGarageHardware:
+          value,
+      }),
+
+    setComparisonMode: (
+      enabled
+    ) =>
+      set({
+        comparisonMode:
+          enabled,
+      }),
+
+    setComparisonPosition: (
+      position
+    ) =>
+      set({
+        comparisonPosition:
+          position,
       }),
   }))
