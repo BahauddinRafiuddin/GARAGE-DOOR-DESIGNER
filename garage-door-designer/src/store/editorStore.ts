@@ -51,10 +51,22 @@ type EditorStore = {
     y: number
   }
 
-  hingePosition: {
+  activeTransformId: string | null
+
+  windowScale: {
     x: number
     y: number
   }
+
+  handleScale: {
+    x: number
+    y: number
+  }
+
+  hingePositions: {
+    x: number
+    y: number
+  }[]
 
   setHouseImage: (
     image: string | null
@@ -142,11 +154,29 @@ type EditorStore = {
     }
   ) => void
 
-  setHingePosition: (
-    position: {
+  setActiveTransformId: (
+    id: string | null
+  ) => void
+
+  setWindowScale: (
+    scale: {
       x: number
       y: number
     }
+  ) => void
+
+  setHandleScale: (
+    scale: {
+      x: number
+      y: number
+    }
+  ) => void
+
+  setHingePositions: (
+    positions: {
+      x: number
+      y: number
+    }[]
   ) => void
 
 }
@@ -193,10 +223,23 @@ export const useEditorStore =
       y: 0.55,
     },
 
-    hingePosition: {
-      x: 0.03,
-      y: 0.2,
+    activeTransformId: null,
+
+    windowScale: {
+      x: 1,
+      y: 1,
     },
+
+    handleScale: {
+      x: 1,
+      y: 1,
+    },
+
+    hingePositions: [
+      { x: 0.03, y: 0.2 },
+      { x: 0.03, y: 0.45 },
+      { x: 0.03, y: 0.7 },
+    ],
 
     setHouseImage: (image) =>
       set({
@@ -336,11 +379,34 @@ export const useEditorStore =
           position,
       }),
 
-    setHingePosition: (
-      position
+    setActiveTransformId: (
+      id
     ) =>
       set({
-        hingePosition:
-          position,
+        activeTransformId:
+          id,
       }),
+
+    setWindowScale: (
+      scale
+    ) =>
+      set({
+        windowScale: scale,
+      }),
+
+    setHandleScale: (
+      scale
+    ) =>
+      set({
+        handleScale: scale,
+      }),
+
+    setHingePositions: (
+      positions
+    ) =>
+      set({
+        hingePositions:
+          positions,
+      }),
+
   }))

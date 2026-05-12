@@ -1,4 +1,12 @@
-import { Image as KonvaImage } from 'react-konva'
+import {
+  Image as KonvaImage,
+  Transformer,
+} from 'react-konva'
+
+import {
+  useEffect,
+  useRef,
+} from 'react'
 
 import useImage from 'use-image'
 
@@ -17,6 +25,12 @@ const GarageHardwareOverlay = ({
   width,
   height,
 }: GarageHardwareOverlayProps) => {
+  const handleRef =
+    useRef<any>(null)
+
+  const transformerRef =
+    useRef<any>(null)
+
   const handlePosition =
     useEditorStore(
       (state) =>
@@ -27,6 +41,42 @@ const GarageHardwareOverlay = ({
     useEditorStore(
       (state) =>
         state.setHandlePosition
+    )
+
+  const handleScale =
+    useEditorStore(
+      (state) =>
+        state.handleScale
+    )
+
+  const setHandleScale =
+    useEditorStore(
+      (state) =>
+        state.setHandleScale
+    )
+
+  const hingePositions =
+    useEditorStore(
+      (state) =>
+        state.hingePositions
+    )
+
+  const setHingePositions =
+    useEditorStore(
+      (state) =>
+        state.setHingePositions
+    )
+
+  const activeTransformId =
+    useEditorStore(
+      (state) =>
+        state.activeTransformId
+    )
+
+  const setActiveTransformId =
+    useEditorStore(
+      (state) =>
+        state.setActiveTransformId
     )
 
   const selectedHandle =
@@ -49,104 +99,178 @@ const GarageHardwareOverlay = ({
     selectedHinge || ''
   )
 
+  useEffect(() => {
+    if (
+      activeTransformId ===
+        'handle' &&
+      transformerRef.current &&
+      handleRef.current
+    ) {
+      transformerRef.current.nodes([
+        handleRef.current,
+      ])
+
+      transformerRef.current
+        .getLayer()
+        ?.batchDraw()
+    }
+  }, [activeTransformId])
+
   const handleWidth =
-    width * 0.16
+    width *
+    0.16 *
+    handleScale.x
 
   const handleHeight =
-    height * 0.16
+    height *
+    0.16 *
+    handleScale.y
+
+  const hingeWidth =
+    width * 0.08
+
+  const hingeHeight =
+    height * 0.08
 
   return (
     <>
       {/* Handle */}
       {selectedHandle &&
         handleImage && (
-          <KonvaImage
-            image={handleImage}
-            x={
-              x +
-              width *
-                handlePosition.x
-            }
-            y={
-              y +
-              height *
-                handlePosition.y
-            }
-            width={handleWidth}
-            height={handleHeight}
-            draggable
+          <>
+            <KonvaImage
+              ref={handleRef}
+              image={handleImage}
+              x={
+                x +
+                width *
+                  handlePosition.x
+              }
+              y={
+                y +
+                height *
+                  handlePosition.y
+              }
+              width={handleWidth}
+              height={handleHeight}
+              draggable
 
-            onDragEnd={(event) => {
-              // Convert absolute canvas position
-              // into normalized garage-relative position
-
-              const localX =
-                (event.target.x() -
-                  x) /
-                width
-
-              const localY =
-                (event.target.y() -
-                  y) /
-                height
-
-              // Prevent dragging outside garage
-
-              const clampedX =
-                Math.max(
-                  0,
-                  Math.min(
-                    localX,
-                    1 -
-                      handleWidth /
-                        width
-                  )
+              onClick={() =>
+                setActiveTransformId(
+                  'handle'
                 )
+              }
 
-              const clampedY =
-                Math.max(
-                  0,
-                  Math.min(
-                    localY,
-                    1 -
-                      handleHeight /
-                        height
-                  )
+              onTap={() =>
+                setActiveTransformId(
+                  'handle'
                 )
+              }
 
-              setHandlePosition({
-                x: clampedX,
-                y: clampedY,
-              })
-            }}
-          />
+              onDragEnd={(
+                event
+              ) => {
+                const localX =
+                  (event.target.x() -
+                    x) /
+                  width
+
+                const localY =
+                  (event.target.y() -
+                    y) /
+                  height
+
+                setHandlePosition(
+                  {
+                    x: localX,
+                    y: localY,
+                  }
+                )
+              }}
+
+              onTransformEnd={() => {
+                const node =
+                  handleRef.current
+
+                setHandleScale({
+                  x:
+                    node.scaleX(),
+                  y:
+                    node.scaleY(),
+                })
+
+                node.scaleX(1)
+                node.scaleY(1)
+              }}
+            />
+
+            {activeTransformId ===
+              'handle' && (
+              <Transformer
+                ref={
+                  transformerRef
+                }
+                rotateEnabled={
+                  false
+                }
+              />
+            )}
+          </>
         )}
 
       {/* Hinges */}
       {selectedHinge &&
         hingeImage &&
-        [0, 1, 2].map(
-          (index) => (
+        hingePositions.map(
+          (
+            hinge,
+            index
+          ) => (
             <KonvaImage
               key={index}
               image={hingeImage}
               x={
                 x +
-                width * 0.03
+                width *
+                  hinge.x
               }
               y={
                 y +
                 height *
-                  (0.2 +
-                    index *
-                      0.25)
+                  hinge.y
               }
-              width={
-                width * 0.08
-              }
-              height={
-                height * 0.08
-              }
+              width={hingeWidth}
+              height={hingeHeight}
+              draggable
+
+              onDragEnd={(
+                event
+              ) => {
+                const localX =
+                  (event.target.x() -
+                    x) /
+                  width
+
+                const localY =
+                  (event.target.y() -
+                    y) /
+                  height
+
+                const updated =
+                  [
+                    ...hingePositions,
+                  ]
+
+                updated[index] =
+                  {
+                    x: localX,
+                    y: localY,
+                  }
+
+                setHingePositions(
+                  updated
+                )
+              }}
             />
           )
         )}

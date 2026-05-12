@@ -1,4 +1,12 @@
-import { Image as KonvaImage } from 'react-konva'
+import {
+  Image as KonvaImage,
+  Transformer,
+} from 'react-konva'
+
+import {
+  useEffect,
+  useRef,
+} from 'react'
 
 import useImage from 'use-image'
 
@@ -17,6 +25,12 @@ const GarageWindowOverlay = ({
   width,
   height,
 }: GarageWindowOverlayProps) => {
+  const imageRef =
+    useRef<any>(null)
+
+  const transformerRef =
+    useRef<any>(null)
+
   const selectedWindow =
     useEditorStore(
       (state) =>
@@ -35,78 +49,135 @@ const GarageWindowOverlay = ({
         state.setWindowPosition
     )
 
+  const windowScale =
+    useEditorStore(
+      (state) =>
+        state.windowScale
+    )
+
+  const setWindowScale =
+    useEditorStore(
+      (state) =>
+        state.setWindowScale
+    )
+
+  const activeTransformId =
+    useEditorStore(
+      (state) =>
+        state.activeTransformId
+    )
+
+  const setActiveTransformId =
+    useEditorStore(
+      (state) =>
+        state.setActiveTransformId
+    )
+
   const [windowImage] = useImage(
     selectedWindow || ''
   )
+
+  useEffect(() => {
+    if (
+      activeTransformId ===
+        'window' &&
+      transformerRef.current &&
+      imageRef.current
+    ) {
+      transformerRef.current.nodes([
+        imageRef.current,
+      ])
+
+      transformerRef.current
+        .getLayer()
+        ?.batchDraw()
+    }
+  }, [activeTransformId])
 
   if (!selectedWindow || !windowImage) {
     return null
   }
 
   const overlayWidth =
-    width * 0.7
+    width *
+    0.7 *
+    windowScale.x
 
   const overlayHeight =
-    height * 0.18
+    height *
+    0.18 *
+    windowScale.y
 
   return (
-    <KonvaImage
-      image={windowImage}
-      x={
-        x +
-        width *
-          windowPosition.x
-      }
-      y={
-        y +
-        height *
-          windowPosition.y
-      }
-      width={overlayWidth}
-      height={overlayHeight}
-      draggable
+    <>
+      <KonvaImage
+        ref={imageRef}
+        image={windowImage}
+        x={
+          x +
+          width *
+            windowPosition.x
+        }
+        y={
+          y +
+          height *
+            windowPosition.y
+        }
+        width={overlayWidth}
+        height={overlayHeight}
+        draggable
 
-      onDragEnd={(event) => {
-        const localX =
-          (event.target.x() -
-            x) /
-          width
-
-        const localY =
-          (event.target.y() -
-            y) /
-          height
-
-        // Keep window inside garage
-
-        const clampedX =
-          Math.max(
-            0,
-            Math.min(
-              localX,
-              1 -
-                overlayWidth /
-                  width
-            )
+        onClick={() =>
+          setActiveTransformId(
+            'window'
           )
+        }
 
-        const clampedY =
-          Math.max(
-            0,
-            Math.min(
-              localY,
-              1 -
-                overlayHeight /
-                  height
-            )
+        onTap={() =>
+          setActiveTransformId(
+            'window'
           )
+        }
 
-        setWindowPosition({
-          x: clampedX,
-          y: clampedY,
-        })
-      }}
-    />
+        onDragEnd={(event) => {
+          const localX =
+            (event.target.x() -
+              x) /
+            width
+
+          const localY =
+            (event.target.y() -
+              y) /
+            height
+
+          setWindowPosition({
+            x: localX,
+            y: localY,
+          })
+        }}
+
+        onTransformEnd={() => {
+          const node =
+            imageRef.current
+
+          setWindowScale({
+            x: node.scaleX(),
+            y: node.scaleY(),
+          })
+
+          node.scaleX(1)
+          node.scaleY(1)
+        }}
+      />
+
+      {activeTransformId ===
+        'window' && (
+        <Transformer
+          ref={transformerRef}
+          rotateEnabled={false}
+        />
+      )}
+    </>
   )
 }
 
